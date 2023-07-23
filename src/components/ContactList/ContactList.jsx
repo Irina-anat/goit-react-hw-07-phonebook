@@ -1,33 +1,38 @@
-import { getContacts, getFilter } from 'redux/selectors';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from 'redux/contactsSlice';
-import PropTypes from 'prop-types';
+import { selectContacts, selectFilter } from 'redux/selectors';
 import css from './ContactList.module.css';
+import { deleteContact } from 'redux/operation';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import PropTypes from 'prop-types';
 
 
 export const ContactList = () => {
-  const contacts = useSelector(getContacts);
-  const filterContacts = useSelector(getFilter);
-  //console.log(filterContacts);
+  const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
+  //console.log(contacts)
+  const filterContacts = useSelector(selectFilter);
+  // console.log(filterContacts);
+  const visibleContacts = contacts.filter(contact =>
+    contact.name.toLowerCase().includes(filterContacts.toLowerCase())
+  );
+  //console.log(visibleContacts)
 
-  const visibleContacts = [
-    ...contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filterContacts)
-    ),
-  ];
+  const handleDeleteContact = contactId => {
+    dispatch(deleteContact(contactId));
+    // console.log(contactId)
+    Notify.failure(`Contact successfully deleted.`);
+  };
 
   return (
     <ul>
-      {visibleContacts.map(({ id, name, number }) => (
+      {visibleContacts.map(({ id, name, phone }) => (
         <li className={css.contact__list} key={id}>
           <p>{name}</p>
-          <p>{number}</p>
+          <p>{phone}</p>
           <button
             value={id}
-            onClick={() => dispatch(deleteContact(id))}
-            type="button"
-          >
+            onClick={() => handleDeleteContact(id)}
+            type="button">
             Delete
           </button>
         </li>

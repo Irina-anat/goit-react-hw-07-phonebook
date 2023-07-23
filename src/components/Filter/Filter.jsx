@@ -1,12 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setFilter } from "redux/filtersSlices";
-import { getFilter } from "redux/selectors";
+import { selectFilter } from 'redux/selectors';
 
 export const Filter = () => {
   const dispatch = useDispatch();
-  const filter = useSelector(getFilter);
+  const filter = useSelector(selectFilter);
+  //console.log(filter)
         
-  const handleChange = ({ currentTarget: { value } }) => {
+  const handleChange = ({ target: { value } }) => {
     const normalizedValue = value.toLowerCase().trim();
     dispatch(setFilter(normalizedValue));
   };

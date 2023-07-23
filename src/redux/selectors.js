@@ -1,4 +1,8 @@
-// файл оголошення функцій-селекторів
-export const getContacts = state => state.contacts;
 
-export const getFilter = state => state.filters;
+export const selectContacts = state => state.contacts.items;
+
+export const selectIsLoading = state => state.contacts.isLoading;
+
+export const selectError = state => state.contacts.error;
+
+export const selectFilter = state => state.filters;

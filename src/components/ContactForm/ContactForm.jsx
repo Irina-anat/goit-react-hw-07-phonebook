@@ -1,14 +1,12 @@
-import { addContact } from 'redux/contactsSlice';
-import { getContacts } from 'redux/selectors';
+import { addContact } from 'redux/operation';
+import { selectContacts } from 'redux/selectors';
 import { useDispatch, useSelector } from 'react-redux';
-import { nanoid } from '@reduxjs/toolkit';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import css from './ContactForm.module.css';
 
-
 export const ContactForm = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(selectContacts);
 
   const handleSubmit = event => {
     event.preventDefault();
@@ -23,27 +21,25 @@ export const ContactForm = () => {
     const isContactExist = contacts.some(
       contact =>
         (contact.name.toLowerCase() === lowerCaseName &&
-          contact.number === number) ||
-        contact.number === number ||
+          contact.phone === number) ||
+        contact.phone === number ||
         contact.name.toLowerCase() === lowerCaseName
     );
 
     isContactExist
       ? Notify.warning(
-          `Contact with that ${name} or ${number} is already present in the phone book.`
-        )
-      : dispatch(addContact(name, number));
-
+        `Contact with that ${name} or ${number} is already present in the phone book.`
+      )
+      : dispatch(addContact({ name: name, phone: number })) &&
+      Notify.success(
+        `The contact has been successfully added.`);
     form.reset();
   };
-
-  const inputNameId = nanoid();
-  const inputNumberId = nanoid();
 
   return (
     <div>
       <form className={css.form} onSubmit={handleSubmit}>
-        <label htmlFor={inputNameId}>
+        <label>
           <input
             type="text"
             name="name"
@@ -52,10 +48,9 @@ export const ContactForm = () => {
             title="Enter last name or first name or both last name and first name"
             required
             value={contacts.name}
-            id={inputNameId}
           />
         </label>
-        <label htmlFor={inputNumberId}>
+        <label>
           <input
             type="tel"
             name="number"
@@ -64,7 +59,6 @@ export const ContactForm = () => {
             title="Valid Phone Number: Optional '+' Symbol, Digits, Spaces, Hyphens, and Parentheses"
             required
             value={contacts.number}
-            id={inputNumberId}
           />
         </label>
         <button type="submit">Add contact</button>
@@ -79,5 +73,3 @@ Notify.init({
   position: 'center-top',
   closeButton: false,
 });
-
-
